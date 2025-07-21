@@ -44,7 +44,7 @@ func getreqip(r *http.Request) string {
 func initdb() *sql.DB {
     db, err := sql.Open("sqlite3", "../bin/assets/db/db.db")
     if err != nil {
-        log.Fatal("E1V1; database error => couldnt open database file =>", err) //error, variant
+        log.Fatal("SE1V1; database error => couldnt open database file =>", err) //error, variant
     }else {                                                                     //TODO: docs for error messages
         log.Println("DB flatfile opened; success!")
     }
@@ -58,7 +58,7 @@ func initdb() *sql.DB {
     `
     _, err = db.Exec(crttable)
     if err != nil {
-        log.Fatal("E1V2; database error => couldnt create table =>", err)
+        log.Fatal("SE1V2; database error => couldnt create table =>", err)
     }
     log.Println("Table created or exists; success!")
     return db
@@ -70,14 +70,15 @@ func main() {
 	defer db.Close()
 
 	log.Println("server started at =>",ip)
-	http.HandleFunc("/req", func(w http.ResponseWriter, r *http.Request) {
+
+	http.HandleFunc("/beacon", func(w http.ResponseWriter, r *http.Request) {
 		cliip := getreqip(r)
 		fmt.Println("Request recieved <=", cliip)
 		insert := `INSERT INTO users (ip) VALUES (?)
 				   ON CONFLICT(ip) DO UPDATE SET modified_at = CURRENT_TIMESTAMP;`
     	_, err := db.Exec(insert, cliip)
     	if err != nil {
-        	log.Fatal("E1V3; database error => couldnt insert data =>", err)
+        	log.Fatal("SE1V3; database error => couldnt insert data =>", err)
      	}else{
         	log.Println("data inserted into db; success!")
       	}
