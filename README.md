@@ -24,4 +24,4 @@ This is a work-in-progress for personal study and Practise, made by a highschool
 
 ### 🔒 Usage Notice
 
-You are expected to **compile from source**, understand the code, and configure it yourself. This is *not* a plug-and-play attack tool.
+You are expected to **compile from source**, understand the code, and configure it yourself. This is *not* a plug-and-play me smart hackerman tool ;( 
