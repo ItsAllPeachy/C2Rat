@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+# gem "rails"
+gem 'colorize'
+gem 'tty-prompt'
+gem 'tty-table'
+
+gem "sqlite3", "~> 2.7"
