@@ -11,7 +11,7 @@ I made this to:
 
 ## Disclaimer
 This project is **NOT** intended for malicious use. It is your responsibility to use this software **only on systems you own or have explicit permission to test**.  
-I do not condone illegal activity and wont support misuse of glorius althought unusable code code
+I do not condone illegal activity and wont support misuse of this glorius althought unusable code
 
 ## Features
 - Device registration / management
