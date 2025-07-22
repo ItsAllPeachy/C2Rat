@@ -40,8 +40,9 @@ func getreqip(r *http.Request) string {
     return ip
 }
 
-
 func initdb() *sql.DB {
+
+
     db, err := sql.Open("sqlite3", "../bin/assets/db/db.db")
     if err != nil {
         log.Fatal("SE1V1; database error => couldnt open database file =>", err) //error, variant
@@ -53,8 +54,9 @@ func initdb() *sql.DB {
         	id INTEGER PRIMARY KEY AUTOINCREMENT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        	ip VARCHAR(45) NOT NULL UNIQUE
-        );
+        	ip VARCHAR(45) NOT NULL UNIQUE,
+         	status VARCHAR(255) NOT NULL
+         );
     `
     _, err = db.Exec(crttable)
     if err != nil {
@@ -64,19 +66,29 @@ func initdb() *sql.DB {
     return db
 }
 
+/// 5 min ///
+
+
 func main() {
 	db := initdb()
 	ip := getip().String()
 	defer db.Close()
-
+	state := "down"
 	log.Println("server started at =>",ip)
 
 	http.HandleFunc("/beacon", func(w http.ResponseWriter, r *http.Request) {
 		cliip := getreqip(r)
+		if cliip != "up" {
+			state = "down"
+			log.Println("SE2V1; client ip error => couldnt enum clients ip => no go error")
+ 		} else {
+  			// beacontimer := Time.NewTimer(1 * Time.Minuites)
+       	    state = "up"
+   		}
 		fmt.Println("Request recieved <=", cliip)
-		insert := `INSERT INTO users (ip) VALUES (?)
+		insert := `INSERT INTO users (ip, state) VALUES (?, ?)
 				   ON CONFLICT(ip) DO UPDATE SET modified_at = CURRENT_TIMESTAMP;`
-    	_, err := db.Exec(insert, cliip)
+    	_, err := db.Exec(insert, cliip, state)
     	if err != nil {
         	log.Fatal("SE1V3; database error => couldnt insert data =>", err)
      	}else{

