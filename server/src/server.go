@@ -80,11 +80,9 @@ func main() {
 	})
 	http.HandleFunc("/beacon", func(w http.ResponseWriter, r *http.Request) {
 		cliip := getreqip(r)
-		// if cliip != "up" {
-		// 	log.Println("SE2V1; client ip error => couldnt enum clients ip => no go error")
- 	    // } else {
-        //   beacontimer := Time.NewTimer(1 * Time.Minuites)
-        // }
+
+		// TODO: add timer for status
+
 		fmt.Println("Request recieved <=", cliip)
 		insert := `INSERT INTO users (ip) VALUES (?)
 				   ON CONFLICT(ip) DO UPDATE SET modified_at = CURRENT_TIMESTAMP;`
@@ -94,6 +92,7 @@ func main() {
      	}else{
         	log.Println("data inserted into/updated db; success!")
       	}
+
 	})
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
